@@ -1,63 +1,47 @@
-# shift(alphabet, number)
-
-# shift(‘a’, 1) #=> ‘b’
-
-# shift(‘A’, 1) #=> ‘B’
-
-# shift(‘z’, 1) #=> ‘a’
-
-# shift(‘Z’, 1) #=> ‘a’
-
-# shift(‘1’, 1) #=> ‘1’
-
-# shift(‘!’, 1) #=> ‘!’
-
-# convert the ‘alphabet’ into ASCII code, which is number.
-# add the ‘number’ to the ASCII to get “nth” alphabet or the ‘alphabet’ parameter.
-
-
-# if the ‘alphabet’ is ‘z’, then 1st alphabet is ‘a’
-# 	Should memorise the ASCII code of ‘a’ to wrap
-
-# if the ‘alphabet’ is ‘Z’, then 1st alphabet is ‘A’ 
-# 	Should memorise the ASCII code of ‘A’ to wrap
-
-# encrypt(string, key)
-# Create the “result” variable and initialise it with “”.
-
-# Traverse the string from the beginning to the end
-# 	Call “get_nth_alphabet” method and concatenate the result with “result” variable.
-
-# When the traversal above is over, return the “result”
-
 ALPHABETS = 25
+DOWN_THRESHOLD = { min: "a".ord, max: "z".ord }
+UP_THRESHOLD = { min: "A".ord, max: "Z".ord }
+
+def encrypt(string, key) 
+  result = ""
+  string.each_char { |character| result += get_nth_alphabet(character, key) }
+  result
+end
 
 def get_nth_alphabet(alphabet, n)
-  if alphabet?(alphabet) == false || n == 0
+  ascii_code = alphabet.ord
+  if alphabet?(ascii_code) == false || n == 0
     return alphabet
   end
 
-   get_nth_ascii_code(alphabet, n).chr
+   get_nth_ascii_code(ascii_code, n).chr
 end
 
-def alphabet? character
-  character.upcase != character || character.downcase != character
+def alphabet? ascii_code
+  upcase?(ascii_code) == true || downcase?(ascii_code) == true
 end
 
-def get_nth_ascii_code(alphabet, n)
-  ascii_code = alphabet.ord
-  if wrap?(alphabet, n) == true
+def get_nth_ascii_code(ascii_code, n)
+  if wrap?(ascii_code, n) == true
     return wrap(ascii_code, n)
   end
   ascii_code + n
 end
 
-def wrap? (alphabet, n)
-  first_alphabets = { "a" => true, "A" =>  true }
-  last_alphabets = { "z" => true, "Z" =>  true }
+def wrap? (ascii_code, n)
+  new_ascii_code = ascii_code + n 
+  (downcase?(ascii_code) == true && downcase?(new_ascii_code) == false) ||
+  (upcase?(ascii_code) == true && upcase?(new_ascii_code) == false)
+end
 
-  (first_alphabets[alphabet] == true && n < 0) || 
-  (last_alphabets[alphabet] == true && n > 0)
+def downcase? (ascii_code)
+  ascii_code >= DOWN_THRESHOLD[:min] &&
+  ascii_code <= DOWN_THRESHOLD[:max]
+end
+
+def upcase? (ascii_code)
+  ascii_code >= UP_THRESHOLD[:min] &&
+  ascii_code <= UP_THRESHOLD[:max]
 end
 
 def wrap(ascii_code, n)
@@ -66,10 +50,10 @@ def wrap(ascii_code, n)
     return (ascii_code - ALPHABETS) + (n - offset)
   end
 
-  ascii_code + ALPHABETS + (n - 1)
+  ascii_code + ALPHABETS - (n + offset)
 end
 
-
+# Test cases for the get_nth_alphabet method.
 p get_nth_alphabet('a', 3)
 p get_nth_alphabet('A', 3)
 p get_nth_alphabet('z', 1)
@@ -81,3 +65,5 @@ p get_nth_alphabet('A', -1)
 p get_nth_alphabet('C', -1)
 p get_nth_alphabet('z', -1)
 p get_nth_alphabet('Z', -1)
+
+p encrypt("What a string!", 5)
