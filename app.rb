@@ -12,13 +12,12 @@ def encrypt(string, key)
   end
 end
 
-
 def get_nth_alphabet(alphabet, n)
   if alphabet?(alphabet) == false
-    return alphabet
+    alphabet
+  else
+    get_nth_ascii_code(alphabet.ord, n).chr
   end
-
-   get_nth_ascii_code(alphabet.ord, n).chr
 end
 
 def alphabet? character
