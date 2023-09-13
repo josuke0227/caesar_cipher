@@ -1,11 +1,20 @@
-ALPHABETS = 25
+ALPHABETS = 26
 DOWN_THRESHOLD = { min: "a".ord, max: "z".ord }
 UP_THRESHOLD = { min: "A".ord, max: "Z".ord }
 
 def encrypt(string, key) 
   result = ""
+  if (key.instance_of? Float) == true
+    raise ArgumentError, "Key must be an integer."
+    return
+  end
+  key = get_key(key)
   string.each_char { |character| result += get_nth_alphabet(character, key) }
   result
+end
+
+def get_key(integer) 
+  integer > ALPHABETS ? integer % ALPHABETS : integer
 end
 
 def get_nth_alphabet(alphabet, n)
@@ -45,12 +54,11 @@ def upcase? (ascii_code)
 end
 
 def wrap(ascii_code, n)
-  offset = 1
   if n > 0
-    return (ascii_code - ALPHABETS) + (n - offset)
+    return (ascii_code - ALPHABETS) + n
   end
 
-  ascii_code + ALPHABETS - (n + offset)
+  ascii_code + ALPHABETS + n
 end
 
 # Test cases for the get_nth_alphabet method.
@@ -66,4 +74,5 @@ p get_nth_alphabet('C', -1)
 p get_nth_alphabet('z', -1)
 p get_nth_alphabet('Z', -1)
 
-p encrypt("What a string!", 5)
+# Test case for encrypt method.
+p encrypt("What a string!", 0.1)
